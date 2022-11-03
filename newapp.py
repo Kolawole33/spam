@@ -17,7 +17,7 @@ from nltk.corpus import stopwords
 feature_extraction= TfidfVectorizer()
 
 spam_mail= pickle.load(open("spam.sav","rb"))
-vec_mail= pickle.load(open("vector.sav","rb")
+vec_mail= pickle.load(open("vector.sav","rb"))
 
 port_stem= PorterStemmer()
 
