@@ -14,32 +14,24 @@ from nltk.corpus import stopwords
 
 
 
-feature_extraction= TfidfVectorizer(min_df=1,stop_words="english",lowercase=True)
+feature_extraction= TfidfVectorizer()
 
 spam_mail= pickle.load(open("spam.sav","rb"))
+vec_mail= pickle.load(open("vector.sav","rb")
 
 port_stem= PorterStemmer()
 
 
 
 def pred_spam(content):
-    stemmed_content = re.search("[^a-zA-Z]"," ",str(content))
-    stemmed_content= stemmed_content.lower()
-    stemmed_content= stemmed_content.split()
-    stemmed_content=[port_stem.stem(word) for word in stemmed_content if not word in stopwords.words("english")]
-    stemmed_content=" ".join(stemmed_content)
-    
-    stemmed_content= feature_extraction.fit(content)
-    
-    stemmed_content= feature_extraction.transform(stemmed_content)
+    stemmed_content= vec_mail.fit_transform([content]).toarray()
 
-    prediction=spam_mail.predict(stemmed_content)
+    prediction= spam_mail.predict(stemmed_content)
     
     if (prediction[0] == 0):
        return " This Not Spam Mail"
     else:
         return "This Spam Mail"
-
 
 def main():
     
@@ -58,7 +50,7 @@ def main():
     
     #creating a button for prediction
     if st.button("spam Result"):
-        spam= pred_spam([Message])
+        spam= pred_spam(str(Message))
         
     st.success(spam)
 
