@@ -8,10 +8,6 @@ Created on Tue Nov  1 10:55:10 2022
 import pickle
 import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.stem.porter import PorterStemmer
-import re
-from nltk.corpus import stopwords
-
 
 
 feature_extraction= TfidfVectorizer()
@@ -19,7 +15,7 @@ feature_extraction= TfidfVectorizer()
 spam_mail= pickle.load(open("spam.sav","rb"))
 vec_mail= pickle.load(open("vector.sav","rb"))
 
-port_stem= PorterStemmer()
+
 
 
 
