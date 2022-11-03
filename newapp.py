@@ -5,51 +5,59 @@ Created on Tue Nov  1 10:55:10 2022
 @author: Kolawole Olanrewaju
 """
 
-import pickle
+
 import streamlit as st
-from sklearn.feature_extraction.text import TfidfVectorizer
+import pickle
+import string
+from nltk.corpus import stopwords
+import nltk
+from nltk.stem.porter import PorterStemmer
+
+ps = PorterStemmer()
 
 
-feature_extraction= TfidfVectorizer()
+def transform_text(text):
+    text = text.lower()
+    text = nltk.word_tokenize(text)
 
+    y = []
+    for i in text:
+        if i.isalnum():
+            y.append(i)
+
+    text = y[:]
+    y.clear()
+
+    for i in text:
+        if i not in stopwords.words('english') and i not in string.punctuation:
+            y.append(i)
+
+    text = y[:]
+    y.clear()
+
+    for i in text:
+        y.append(ps.stem(i))
+
+    return " ".join(y)
+
+vec_mail = pickle.load(open('vector.sav','rb'))
 spam_mail= pickle.load(open("spam.sav","rb"))
-vec_mail= pickle.load(open("vector.sav","rb"))
 
+st.title("Email/SMS Spam Classifier")
 
+input_sms = st.text_area("Enter the message")
 
+if st.button('Predict'):
 
-
-def pred_spam(content):
-    stemmed_content= vec_mail.fit_transform([content]).toarray()
-
-    prediction= spam_mail.predict(stemmed_content)
-    
-    if (prediction[0] == 0):
-       return " This Not Spam Mail"
+    # 1. preprocess
+    transformed_sms = transform_text(input_sms)
+    # 2. vectorize
+    vector_input = vec_mail.transform([transformed_sms])
+    # 3. predict
+    result = spam_mail.predict(vector_input)[0]
+    # 4. Display
+    if result == 1:
+        st.header("Spam")
     else:
-        return "This Spam Mail"
+        st.header("Not Spam")
 
-def main():
-    
-    
-    #giving title 
-    st.title('Spam Prediction Web App')
-    
-    #getting the input data from the user
-    
-    Message = st.text_input("Enter your Mail")
-    
-    
-    
-    #code for prediction
-    spam= ''
-    
-    #creating a button for prediction
-    if st.button("spam Result"):
-        spam= pred_spam(str(Message))
-        
-    st.success(spam)
-
-
-if __name__== "__main__":
-    main()
